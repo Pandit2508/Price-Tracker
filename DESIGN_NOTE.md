@@ -30,8 +30,6 @@ The store renders its product pages in the browser, so the server's HTML contain
 
 ## What the AI tools got wrong, and how it was corrected
 
-*Real corrections from building this project with an AI assistant. Replace or extend with your own.*
-
 1. **Retries were being hidden.** The first version of the stability loop caught *every* retryable error and kept polling inside a single attempt. A test that simulated two network failures followed by a good read reported plain `success` with one attempt, so flaky runs would have looked perfect in the log. Fix: only "content not ready" errors (placeholder text, missing element, half-rendered price) are polled inside an attempt; everything else fails the attempt and is logged as a retry. The test that caught it now guards the behaviour.
 2. **Adjacent numbers were merged into one price.** The first number tokenizer allowed spaces inside a number, so `1999 1499` (two prices) would have parsed as `19991499`. Fix: whitespace is not allowed inside a number, so it is now read as two values and rejected as ambiguous. Covered by a test.
 3. **Tooling assumptions.** The first test script (`node --test test/`) failed on Node 22, which treats the path as a module rather than a directory; the shell's brace expansion also did not work in the sandbox and silently created the wrong folders. Both were caught by running the code instead of trusting it.
@@ -39,4 +37,3 @@ The store renders its product pages in the browser, so the server's HTML contain
 5. **The first plan assumed the price was in the page.** The first discovery script (and the plan built on it) recorded the page after load, which showed "Price hidden" and no price. Only a second script that hovered and clicked Reveal exposed the interaction, the challenge/token requests, the decoy prices and the zero-width characters. Fix: a one-time `prepare` step that reveals the price, and an extractor rewritten around the observed DOM instead of a simple selector.
 6. **Over-claiming in a test.** A test asserted that the discount cross-check would catch a swapped-digit price (50,534 vs 50,435). It failed because that value is 18.84% off, which rounds to the same 19% badge. Fix: the test now states what the check can and cannot catch, and the limit is documented above.
 
-*Your own entries:* ____________________________________________
