@@ -11,9 +11,6 @@ Search the INE mock store (https://demo.inelabteamdev.com), track a product, and
 
 Live site: (https://price-tracker-delta-flame.vercel.app/)
 
-> ## Status
-> The extractor is written from what the store's product page actually does (hidden price, reveal step, look-alike prices; see `backend/src/store/selectors.js`). Its selection logic is unit-tested against the real HTML captured from a browser, but a **live run against the store is the final check**: run `npm run scrape:headed -- --id 733` and confirm it prints the same price you see on the page. Also confirm search works (the catalog endpoint is `CATALOG_URL`).
-
 ## How it works
 
 ```
@@ -25,8 +22,6 @@ Vercel frontend --REST--> backend --supabase-js--> Supabase: tracked_products, p
 * **Why a headless browser:** the store's HTML is a ~459-byte shell rendered client-side, and the price is hidden until the pointer dwells over the price area and "Reveal price" is clicked, which makes the page run its own challenge and token request before drawing the price. Reimplementing that would be brittle; a browser lets the page's own code do it while we drive the UI like a person. Catalog search does *not* need a browser; it uses the store's catalog request directly.
 * **Scheduling:** free-tier backends sleep, so there is no in-process timer. cron-job.org calls `POST /api/scrape/run` every 2 hours; that request wakes the instance, which replies `202` immediately (cron-job.org gives up after ~30 s) and keeps scraping in the background.
 * **Reliability details** are in [DESIGN_NOTE.md](DESIGN_NOTE.md).
-
-## Run it locally
 
 Requirements: Node 20+, a Supabase project.
 
@@ -84,7 +79,6 @@ npm run dev                     # http://localhost:5173
 
 If the store changes its markup, scrapes fail with `SELECTOR_MISSING`, `PARSE_PRICE` or `PRICE_NOT_REVEALED` (visible in the scrape log, nothing stored). To investigate: `node scripts/inspect-reveal.js 733` opens the page, reveals the price and prints the network calls and the HTML around the price and stock; `node scripts/inspect.js 733` records the page before the reveal.
 
-## Headed (observable) run, for the screen recording
 
 ```bash
 cd backend
