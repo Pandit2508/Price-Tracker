@@ -9,7 +9,7 @@ Search the INE mock store (https://demo.inelabteamdev.com), track a product, and
 | Database | PostgreSQL | Supabase |
 | Scheduler | cron-job.org calling the backend | cron-job.org |
 
-Live site: `TODO`  |  Backend: `TODO`  |  Screen recording: `TODO`
+Live site: `https://price-tracker-delta-flame.vercel.app/`
 
 > ## Status
 > The extractor is written from what the store's product page actually does (hidden price, reveal step, look-alike prices; see `backend/src/store/selectors.js`). Its selection logic is unit-tested against the real HTML captured from a browser, but a **live run against the store is the final check**: run `npm run scrape:headed -- --id 733` and confirm it prints the same price you see on the page. Also confirm search works (the catalog endpoint is `CATALOG_URL`).
